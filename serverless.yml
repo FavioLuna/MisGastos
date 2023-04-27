@@ -1,0 +1,66 @@
+service: aws-node-users
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource:
+            - arn:aws:dynamodb:us-east-1:473654656552:table/UsersTable2
+
+
+functions:
+  app:
+    handler: index.handler
+    events:
+      - httpApi:
+          path: ANY /
+          path: 'ANY {proxy+}'
+    
+  createUser:
+    handler: index.handler
+    events:
+      - httpApi:
+          path: /users
+          method: post
+
+  getUsers:
+    handler: controllers/userControllers.getUsers
+    events:
+      - httpApi:
+          path: /users
+          method: get
+
+  getUserById:
+    handler: controllers/userControllers.getUserById
+    events:
+      - httpApi:
+          path: /users/{id}
+          method: get
+
+  deleteUser:
+    handler: controllers/userControllers.deleteUser
+    events:
+      - httpApi:
+          path: /users/{id}
+          method: delete
+
+resources:
+  Resources:
+    UsersTable2:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UsersTable2
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
