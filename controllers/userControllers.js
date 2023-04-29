@@ -1,6 +1,6 @@
 const { User } = require ('../models/userModel');
 
-const createUser = async (req, res) =>{
+/*const createUser = async (req, res) =>{
     
     try {
 
@@ -12,7 +12,7 @@ const createUser = async (req, res) =>{
         console.log(error)
         return res.status(400).json({ success: false, message: error.message})
     }
-}
+}*/
 
 const getUsers = async (req, res) => {
 
@@ -29,19 +29,23 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
 
     try {
-        const {id} = req.body;
+        const id = req.params.id;
         const user = await User.getUserById(id);
-
+        if (!user) {
+            return res.status(404).json({success: false, message: 'User not found'})
+        }
+        
         return res.status(200).json({success: true, message:'User obtained successfully', user})
+
     } catch (error) {
         console.log(error);
         return res.status(400).json({ success: false, message: error.message})
     }
 }
 
-const deleteUser = async (req, res) => {
+/*const deleteUser = async (req, res) => {
     try {
-        const {id} = req.body;
+        const {id} = req.params;
         const deleted = await User.deleteUser(id);
         if (!deleted) {
             return res.status(404).json({ success: false, message: 'User not found'})
@@ -52,12 +56,12 @@ const deleteUser = async (req, res) => {
         console.log(error)
         return res.status(400).json({ success: false, message: error.message})
     }
-}
+}*/
 
 
 module.exports = {
-    createUser,
+    //createUser,
     getUsers,
     getUserById,
-    deleteUser
+    //deleteUser
 }
