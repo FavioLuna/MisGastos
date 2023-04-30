@@ -1,46 +1,51 @@
 const AWS = require("aws-sdk");
 const {v4} = require ("uuid");
-const { hashPassword } = require("../utils/bcrypt");
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-class User {
-    constructor(id, email, password, totalAmount, amounts, totalSpents, spents, createdAt) {
+class Spent {
+    constructor(id, title, description, amount, category, createdAt) {
         this.id = id;
-        this.email = email;
-        this.password = password;
-        this.totalAmount = totalAmount;
-        this.amounts = amounts;
-        this.totalSpents = totalSpents;
-        this.spents = spents;
+        this.title = title;
+        this.description = description;
+        this.amount = amount;
+        this.category = category;
         this.createdAt = createdAt;
     }
 
-    static async createUser(email, pass){
+    static async createSpent(userId, title, description, amount, category){
         const createdAt = new Date().toLocaleString();
-        const password = await hashPassword(pass);
         const id = v4()
 
-        const newUser = new User(id, email, password, 0, [], 0, [], createdAt)
-        
+        const newSpent = new Spent(id, title, description, amount, category, createdAt)
+
+        const user = await dynamodb.get({
+            TableName: 'UsersTable2',
+            Key: {
+                id: userId
+            }
+        }).promise();
+
+        user.spents.push(newSpent);
+
         await dynamodb.put({
             TableName: "UsersTable2",
-            Item: newUser,
+            Item: user,
         }).promise()
 
-        return newUser
+        return newSpent
     }
 
-    static async getUsers(){
+/*    static async getUsers(){
         const result = await dynamodb.scan({
             TableName: 'UsersTable2'
         }).promise()
 
         const users = result.Items.map(item => new User(
             item.id,
-            item.email,
-            item.password,
-            item.totalAmount,
+            item.amount,
+            item.description,
+            item.title,
             item.amounts,
             item.totalSpents,
             item.spents,
@@ -64,9 +69,9 @@ class User {
         } else {
             return new User(
                 result.Item.id,
-                result.Item.email,
-                result.Item.password,
-                result.Item.totalAmount,
+                result.Item.amount,
+                result.Item.description,
+                result.Item.title,
                 result.Item.amounts,
                 result.Item.totalSpents,
                 result.Item.spents,
@@ -92,21 +97,7 @@ class User {
         } else {
             return true;
         }
-    }
-
-    static async checkEmailExists(email){
-        const params = {
-            TableName: 'UsersTable2',
-            FilterExpression: 'email = :email',
-            ExpressionAttributeValues: {
-                ':email' : email
-            }
-        };
-
-        const result = await dynamodb.scan(params).promise();
-
-        return result.Items.length > 0;
-    }
+    }*/
 }
 
-module.exports = { User};
+module.exports = { Spent };

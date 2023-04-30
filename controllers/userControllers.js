@@ -1,10 +1,15 @@
 const { User } = require ('../models/userModel');
 
-/*const createUser = async (req, res) =>{
+const createUser = async (req, res) =>{
     
     try {
 
         const { email, password } = req.body;
+        const emailExists = await User.checkEmailExists(email);
+        if (emailExists) {
+            return res.status(409).json({ success: false, message: 'Email already in use'})
+
+        }
         const newUser = await User.createUser(email, password);
 
         return res.status(201).json({success: true, message:'User created successfully', newUser})
@@ -12,7 +17,7 @@ const { User } = require ('../models/userModel');
         console.log(error)
         return res.status(400).json({ success: false, message: error.message})
     }
-}*/
+}
 
 const getUsers = async (req, res) => {
 
@@ -43,7 +48,7 @@ const getUserById = async (req, res) => {
     }
 }
 
-/*const deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
         const {id} = req.params;
         const deleted = await User.deleteUser(id);
@@ -56,12 +61,12 @@ const getUserById = async (req, res) => {
         console.log(error)
         return res.status(400).json({ success: false, message: error.message})
     }
-}*/
+}
 
 
 module.exports = {
-    //createUser,
+    createUser,
     getUsers,
     getUserById,
-    //deleteUser
+    deleteUser
 }

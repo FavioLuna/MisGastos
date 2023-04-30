@@ -20,6 +20,20 @@ functions:
     events:
       - httpApi: '*'
 
+  userById:
+    handler: index.handler
+    events:
+      - httpApi: 
+          path: /api/user/{id}
+          method: get
+
+  createUser:
+    handler: index.handler
+    events:
+      - httpApi: 
+          path: /api/signup
+          method: post
+          
 resources:
   Resources:
     UsersTable2:

@@ -3,9 +3,10 @@ const userControllers = require('../controllers/userControllers');
 
 const router = express.Router();
 
-//router.post('/', userControllers.createUser);
+router.post('/signup', userControllers.createUser);
+//router.post('/signin')
 router.get('/users', userControllers.getUsers);
 router.get('/user/:id', userControllers.getUserById);
-//router.delete('/:id', userControllers.deleteUser);
+router.delete('/user/me/:id', userControllers.deleteUser);
 
 module.exports = router;
