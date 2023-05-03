@@ -63,10 +63,26 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const login = async (req, res) => {
+    try {
+        const user = await User.checkUser(req.body.email, req.body.password); 
+        if (user == null) {
+            return res.status(404).json({success: false, message: 'User not found'})
+        }
+
+        const token = await User.generateToken(user);  
+        return res.status(200).json({success: true, user, token});
+     } catch (error) {
+        console.log(error);
+        return res.status(401).json({success: false, message: error.message});
+    }
+}
+
 
 module.exports = {
     createUser,
     getUsers,
     getUserById,
-    deleteUser
+    deleteUser,
+    login
 }

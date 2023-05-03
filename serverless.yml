@@ -31,7 +31,7 @@ functions:
     handler: index.handler
     events:
       - httpApi: 
-          path: /api/signup
+          path: /api/user
           method: post
           
 resources:
