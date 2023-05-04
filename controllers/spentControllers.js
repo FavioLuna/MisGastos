@@ -3,7 +3,7 @@ const { Spent } = require('../models/spentModel');
 const createSpent = async (req, res) => {
     try {
         const { title, description, amount, category} = req.body;
-        const user = req.user
+        const user = res.locals.user
         
         const newSpent = await Spent.createSpent(user.id, title, description, amount, category)
         

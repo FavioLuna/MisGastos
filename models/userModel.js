@@ -123,39 +123,55 @@ class User {
         };
 
         const result = await dynamodb.scan(params).promise();
-        if (!result) {
-            return null
+        if (result.Items.length > 0) {
+            //Scan devuelve un arreglo de resultados
+            const user = new User(
+                result.Items[0].id,
+                result.Items[0].email,
+                result.Items[0].password,
+                result.Items[0].totalAmount,
+                result.Items[0].amounts,
+                result.Items[0].totalSpents,
+                result.Items[0].spents,
+                result.Items[0].createdAt,
+                result.Items[0].tokens
+            );
+
+            const isMatch = comparePassword(password, user.password)
+            if (!isMatch) {
+                return null
+            }
+            return user;
         }
 
-        //Scan devuelve un arreglo de resultados
-        const user = new User(
-            result.Items[0].id,
-            result.Items[0].email,
-            result.Items[0].password,
-            result.Items[0].totalAmount,
-            result.Items[0].amounts,
-            result.Items[0].totalSpents,
-            result.Items[0].spents,
-            result.Items[0].createdAt,
-            result.Items[0].tokens
-        );
-
-        const isMatch = comparePassword(password, user.password)
-        if (!isMatch) {
-            return null
-        }
-
-        return user;
+        return "Invalid email or password"
     }
 
     static async generateToken(user){
         const token = jwt.sign({id : user.id}, config.JWTSecret, {expiresIn: '86400s'});
         user.tokens.push(token);
+        //user.tokens = user.tokens.concat({ token: token });
         await dynamodb.put({
             TableName: "UsersTable2",
             Item: user,
         }).promise()
         return token;
+    }
+
+    static async extractToken(user, tokenToRemove){
+        try {
+            user.tokens = user.tokens.filter(token => {
+                return token !== tokenToRemove;
+            })
+            await dynamodb.put({
+                TableName: "UsersTable2",
+                Item: user,
+            }).promise();
+            return user;
+        } catch (error) {
+            return error
+        }
+
     }
 }
 

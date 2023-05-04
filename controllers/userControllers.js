@@ -66,15 +66,29 @@ const deleteUser = async (req, res) => {
 const login = async (req, res) => {
     try {
         const user = await User.checkUser(req.body.email, req.body.password); 
-        if (user == null) {
-            return res.status(404).json({success: false, message: 'User not found'})
+        if (typeof user === "string") {
+            return res.status(404).json({success: false, message: user})
         }
-
+        console.log(user);
         const token = await User.generateToken(user);  
         return res.status(200).json({success: true, user, token});
      } catch (error) {
         console.log(error);
         return res.status(401).json({success: false, message: error.message});
+    }
+}
+
+const logout = async (req, res) => {
+    try {
+        console.log(res.locals.user, res.locals.token);
+        const result = await User.extractToken(res.locals.user, res.locals.token);
+        if (typeof result === "string") {
+            return res.status(400).json({success: false, result}) 
+        }
+        return res.status(200).json({success: true, message: "Success logout", result})
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json(error)
     }
 }
 
@@ -84,5 +98,6 @@ module.exports = {
     getUsers,
     getUserById,
     deleteUser,
-    login
+    login,
+    logout
 }
