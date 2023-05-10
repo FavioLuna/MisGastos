@@ -6,10 +6,11 @@ const router = express.Router();
 
 router.post('/user', userControllers.createUser);
 router.post('/login', userControllers.login);
-router.post('/loguot', auth, userControllers.logout);
+router.post('/logout', auth, userControllers.logout);
+router.post('/income', auth, userControllers.addIncome)
 router.get('/users', userControllers.getUsers);
-router.get('/user/:id', userControllers.getUserById);
-router.delete('/user/me/:id', userControllers.deleteUser);
+router.get('/user/me', auth, userControllers.getUserById);
+router.delete('/user/me', auth, userControllers.deleteUser);
 
 
 module.exports = router;

@@ -18,6 +18,7 @@ const auth = async (req, res, next) => {
             }
 
             res.locals.user = user;
+            console.log(user);
             res.locals.token = token;
             next();
         }

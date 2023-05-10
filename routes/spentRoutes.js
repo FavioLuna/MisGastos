@@ -4,6 +4,11 @@ const auth = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/spents', auth, spentControllers.createSpent);
+router.post('/spent', auth, spentControllers.createSpent);
+router.get('/spents', auth, spentControllers.getSpents);
+router.get('/spent/:id', auth, spentControllers.getSpentById);
+router.put('/spent/:id', auth, spentControllers.putSpent);
+router.delete('/spent/:id', auth, spentControllers.deleteSpent);
+
 
 module.exports = router;

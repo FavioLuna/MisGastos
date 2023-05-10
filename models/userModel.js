@@ -8,12 +8,12 @@ const jwt = require('jsonwebtoken');
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 class User {
-    constructor(id, email, password, totalAmount, amounts, totalSpents, spents, createdAt, tokens) {
+    constructor(id, email, password, totalIncomes, incomes, totalSpents, spents, createdAt, tokens) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.totalAmount = totalAmount;
-        this.amounts = amounts;
+        this.totalIncomes = totalIncomes;
+        this.incomes = incomes;
         this.totalSpents = totalSpents;
         this.spents = spents;
         this.createdAt = createdAt;
@@ -44,8 +44,8 @@ class User {
             item.id,
             item.email,
             item.password,
-            item.totalAmount,
-            item.amounts,
+            item.totalIncomes,
+            item.incomes,
             item.totalSpents,
             item.spents,
             item.createdAt,
@@ -71,8 +71,8 @@ class User {
                 result.Item.id,
                 result.Item.email,
                 result.Item.password,
-                result.Item.totalAmount,
-                result.Item.amounts,
+                result.Item.totalIncomes,
+                result.Item.incomes,
                 result.Item.totalSpents,
                 result.Item.spents,
                 result.Item.createdAt,
@@ -129,8 +129,8 @@ class User {
                 result.Items[0].id,
                 result.Items[0].email,
                 result.Items[0].password,
-                result.Items[0].totalAmount,
-                result.Items[0].amounts,
+                result.Items[0].totalIncomes,
+                result.Items[0].incomes,
                 result.Items[0].totalSpents,
                 result.Items[0].spents,
                 result.Items[0].createdAt,
@@ -171,7 +171,6 @@ class User {
         } catch (error) {
             return error
         }
-
     }
 }
 
