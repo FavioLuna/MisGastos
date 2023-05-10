@@ -57,18 +57,8 @@ class Spent {
 
     static async deleteSpent(idSpent, user){
         try {
-            //revisar esto para optimizar
-            /*user.spents.forEach(spent => {
-                if (spent.id == idSpent) {
-                    user.totalIncomes += spent.amount;
-                    user.totalSpents -= spent.amount;
-                }
-            });
-            user.spents = user.spents.filter(spent => {
-                return spent.id !== idSpent;
-            })*/
-            const spentIndex = user.spents.findIndex(spent => spent.id === idSpent);
 
+            const spentIndex = user.spents.findIndex(spent => spent.id === idSpent);
             if (spentIndex !== -1) {
                 const spent = user.spents[spentIndex];
                 user.totalIncomes += spent.amount;
@@ -89,6 +79,31 @@ class Spent {
         } catch (error) {
             return error
         }
+    }
+
+    static async putSpent(idSpent, user, body){
+        try {
+            const spent = user.spents.find(s => s.id === idSpent);
+            if (!spent) {
+                return 'Spent not found';
+            }
+            
+            Object.keys(body).forEach(key => {
+                if (body[key] != null) {
+                  spent[key] = body[key];
+                }
+            });
+
+            await dynamodb.put({
+                TableName: "UsersTable2",
+                Item: user,
+            }).promise();
+
+            return spent
+        } catch (error) {
+            return error
+        }
+
     }
 
 }

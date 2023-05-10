@@ -40,18 +40,15 @@ const getSpentById = async (req, res) => {
 
 const putSpent = async (req, res) => {
     try {
-        const user = res.locals.user;
-        const spent = user.spents.find(s => s.id === req.params.id);
-        if (!spent) {
-            return res.status(404).json({ message: 'Spent not found' });
+
+        const spent = await Spent.putSpent(req.params.id, res.locals.user, req.body);
+        if (!spent || typeof spent === "string") {
+            return res.status(404).json({spent});
         }
-        Object.keys(req.body).forEach(key => {
-            if (req.body[key] != null) {
-              spent[key] = req.body[key];
-            }
-          });
+        return res.status(200).json({message: "Spent actualized succefully"})
     } catch (error) {
-        
+        console.log(error);
+        return res.status(500).json({error, message: error.message});
     }
 }
 
